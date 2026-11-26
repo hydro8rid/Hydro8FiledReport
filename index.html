@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>สำรวจภาคสนาม ศอท.ใต้ v1.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--line:#dde3ea;--tx:#1f2937;--mut:#6b7280;--pri:#1565c0;--priL:#e8f0fe;--ok:#1b8a3a;--okL:#e6f4ea;--warn:#b26a00;--warnL:#fff4d6;--bad:#c62828;--badL:#fdecea}
+*{box-sizing:border-box}body{margin:0;font-family:Sarabun,system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:16px}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px}
+header h1{font-size:17px;margin:0;flex:1}header small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+.net{font-size:12px;padding:3px 8px;border-radius:12px;background:var(--okL);color:var(--ok);font-weight:600}.net.off{background:var(--badL);color:var(--bad)}
+main{padding:12px;max-width:720px;margin:0 auto 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h2{font-size:16px;margin:0 0 10px;color:var(--pri)}
+label{display:block;font-size:14px;color:var(--mut);margin:8px 0 3px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--tx)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--priL);border-color:var(--pri)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+button{font:inherit;border:0;border-radius:10px;padding:12px 14px;cursor:pointer;font-weight:600}
+.bp{background:var(--pri);color:#fff}.bs{background:var(--priL);color:var(--pri)}.bd{background:var(--badL);color:var(--bad)}
+.big{display:block;width:100%;text-align:left;padding:18px;margin-bottom:12px;font-size:18px;border:1px solid var(--line);background:#fff;color:var(--tx)}
+.big b{color:var(--pri)}.big small{display:block;color:var(--mut);font-weight:400;font-size:14px}
+.info{background:var(--priL);border-radius:8px;padding:8px 10px;font-size:14px;margin-top:8px}
+.flag{padding:8px 10px;border-radius:8px;font-weight:700;margin-top:8px}
+.flag.ok{background:var(--okL);color:var(--ok)}.flag.warn{background:var(--warnL);color:var(--warn);border:1px solid #f0c24b}.flag.bad{background:var(--badL);color:var(--bad);border:1px solid #ef9a9a}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:4px}td input{padding:6px}
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.slot{border:1px dashed var(--line);border-radius:10px;padding:8px;text-align:center;font-size:13px;color:var(--mut);position:relative;min-height:110px}
+.slot img{width:100%;border-radius:6px;display:block}.slot .x{position:absolute;top:4px;right:4px;background:#fff;border-radius:50%;width:26px;height:26px;padding:0;color:var(--bad)}
+.slot input{display:none}.slot label{color:var(--pri);margin:0;cursor:pointer;font-weight:600}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex}
+nav button{flex:1;background:#fff;border-radius:0;color:var(--mut);padding:12px 4px;font-size:14px}nav button.on{color:var(--pri);box-shadow:inset 0 3px 0 var(--pri)}
+.q{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:14px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:700}
+.b-wait{background:var(--warnL);color:var(--warn)}.b-ok{background:var(--okL);color:var(--ok)}.b-err{background:var(--badL);color:var(--bad)}
+.hide{display:none!important}.mut{color:var(--mut);font-size:13px}
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#263238;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:9;max-width:90%}
+</style></head><body>
+<header><h1>สำรวจภาคสนาม <small>ศูนย์อุทกวิทยาชลประทานภาคใต้ • v1.1</small></h1><span id="net" class="net">ออนไลน์</span></header>
+<main>
+<!-- ===== หน้าเลือกงาน ===== -->
+<section id="pg-home">
+  <button class="big" onclick="startForm('Q')"><b>1. งานสำรวจปริมาณน้ำ</b><small>ระดับน้ำ ความเร็ว ความกว้าง อัตราการไหล ตรวจสอบโทรมาตร ภาพถ่าย (73 สถานี)</small></button>
+  <button class="big" onclick="startForm('S')"><b>2. งานสำรวจตะกอนแขวนลอยในลำน้ำ</b><small>เก็บตัวอย่างตะกอน ระดับน้ำ ตรวจสอบโทรมาตร ภาพถ่าย (40 สถานี)</small></button>
+  <div class="card"><h2>สถานะการส่ง</h2><div id="homeQ" class="mut">-</div></div>
+</section>
+
+<!-- ===== แบบฟอร์ม ===== -->
+<section id="pg-form" class="hide">
+<form id="f" onsubmit="return false">
+  <div class="card"><h2 id="fTitle">-</h2>
+    <label>สถานี (พิมพ์รหัสหรือชื่อเพื่อค้นหา)</label>
+    <input id="stSearch" placeholder="เช่น X.44 หรือ อู่ตะเภา" oninput="fillStations()">
+    <select id="station" name="station" required onchange="stInfo()"></select>
+    <div id="stInfo" class="info hide"></div>
+    <div class="row"><div><label>วันที่สำรวจ</label><input type="date" name="date" required></div>
+    <div><label>สภาพอากาศ</label><select name="weather"><option>แดดจัด</option><option>มีเมฆ</option><option>ฝนตกเล็กน้อย</option><option>ฝนตกหนัก</option></select></div></div>
+    <div class="row"><div><label>เวลาเริ่ม</label><input type="time" name="tStart"></div><div><label>เวลาสิ้นสุด</label><input type="time" name="tEnd"></div></div>
+    <label>หัวหน้าชุดสำรวจ</label><input name="leader" required>
+    <label>ผู้ร่วมสำรวจ</label><input name="team" placeholder="คั่นด้วย ,">
+    <label>พิกัด GPS</label>
+    <div class="row3"><input name="lat" placeholder="Lat" inputmode="decimal"><input name="lon" placeholder="Lon" inputmode="decimal"><button type="button" class="bs" onclick="getGPS()">อ่าน GPS</button></div>
+    <input type="hidden" name="gpsAcc"><div id="gpsMsg" class="mut"></div>
+  </div>
+
+  <div class="card"><h2>ระดับน้ำที่เสาระดับ</h2>
+    <label>ค่าที่อ่านจากเสา</label>
+    <select name="wlRef" onchange="calc()"><option value="REL">อ่านเทียบศูนย์เสา (ม.) — ต้องใส่ระดับศูนย์เสา</option><option value="MSL">อ่านเป็น ม.รทก. โดยตรง</option></select>
+    <div id="gzBox"><label>ระดับศูนย์เสา (ม.รทก.)</label><input name="gzero" inputmode="decimal" oninput="calc()"><div class="mut">ระบบจำค่าล่าสุดของแต่ละสถานีไว้ให้ ตรวจสอบกับข้อมูลสถานีก่อนใช้</div></div>
+    <div class="row"><div><label>ระดับน้ำ เริ่มวัด (ม.)</label><input name="wlStart" inputmode="decimal" oninput="calc()"></div>
+    <div><label>ระดับน้ำ สิ้นสุด (ม.)</label><input name="wlEnd" inputmode="decimal" oninput="calc()"></div></div>
+    <div class="info">ระดับน้ำเฉลี่ย: <b id="wlMslTxt">-</b> ม.รทก.</div>
+  </div>
+
+  <div class="card"><h2>ตรวจสอบความถูกต้องระบบโทรมาตร</h2>
+    <div class="mut">อ่านค่าที่เสาและค่าโทรมาตรในเวลาเดียวกัน</div>
+    <div class="row"><div><label>เวลาตรวจ</label><input type="time" name="teleTime"></div>
+    <div><label>ค่าที่เสา ณ เวลาตรวจ (ตามหน่วยข้างบน)</label><input name="teleStaffRaw" inputmode="decimal" oninput="calc()"></div></div>
+    <div class="row"><div><label>ค่าที่โทรมาตรแสดง (ม.รทก.)</label><input name="teleVal" inputmode="decimal" oninput="calc()"></div>
+    <div><label>เกณฑ์ยอมรับ ±(ซม.)</label><input name="teleTol" inputmode="decimal" oninput="calc()" placeholder="ตั้งที่หน้าตั้งค่า"></div></div>
+    <div id="teleFlag" class="flag hide"></div>
+  </div>
+
+  <!-- เฉพาะงานปริมาณน้ำ -->
+  <div class="card catQ"><h2>การวัดปริมาณน้ำ</h2>
+    <div class="row"><div><label>วิธีวัด</label><select name="method"><option>เครื่องวัดกระแสน้ำ (Current meter)</option><option>ADCP</option><option>ทุ่นลอย (Float)</option><option>อื่นๆ</option></select></div>
+    <div><label>ตำแหน่งวัด</label><select name="position"><option>บนสะพาน</option><option>เรือ</option><option>ลุยน้ำ</option><option>กระเช้า/สลิง</option><option>อื่นๆ</option></select></div></div>
+    <label>เครื่องมือ/หมายเลขเครื่อง</label><input name="instrument">
+    <details style="margin-top:10px"><summary><b>คำนวณจากแนวดิ่ง (วิธี Mid-section)</b> — ไม่บังคับ</summary>
+      <div class="mut">ใส่ระยะจากหลักอ้างอิง ความลึก และความเร็วเฉลี่ยในแนวดิ่ง (แนวแรก/สุดท้ายคือขอบตลิ่ง ความลึก 0)</div>
+      <table><thead><tr><th>#</th><th>ระยะ (ม.)</th><th>ลึก (ม.)</th><th>V (ม./วิ)</th><th></th></tr></thead><tbody id="vt"></tbody></table>
+      <div class="row" style="margin-top:6px"><button type="button" class="bs" onclick="addV()">+ แนวดิ่ง</button><button type="button" class="bp" onclick="midSection()">คำนวณ → เติมค่าด้านล่าง</button></div>
+    </details>
+    <div class="row"><div><label>ความกว้างลำน้ำ (ม.)</label><input name="width" inputmode="decimal"></div><div><label>พื้นที่หน้าตัด (ตร.ม.)</label><input name="area" inputmode="decimal" oninput="vmean()"></div></div>
+    <div class="row"><div><label>อัตราการไหล Q (ลบ.ม./วินาที)</label><input name="Q" inputmode="decimal" oninput="vmean()"></div><div><label>ความเร็วเฉลี่ย (ม./วินาที)</label><input name="vMean" inputmode="decimal"></div></div>
+    <div class="row"><div><label>ความลึกสูงสุด (ม.)</label><input name="dMax" inputmode="decimal"></div><div><label>จำนวนแนวดิ่ง</label><input name="nVert" inputmode="numeric"></div></div>
+  </div>
+
+  <!-- เฉพาะงานตะกอน -->
+  <div class="card catS"><h2>การเก็บตัวอย่างตะกอนแขวนลอย</h2>
+    <div class="row"><div><label>วิธีเก็บตัวอย่าง</label><select name="sMethod"><option>EWI (Equal Width Increment)</option><option>EDI (Equal Discharge Increment)</option><option>เก็บแบบจุด/ตักผิวน้ำ</option><option>อื่นๆ</option></select></div>
+    <div><label>เครื่องเก็บตัวอย่าง</label><select name="sampler"><option>DH-48</option><option>DH-59</option><option>D-49</option><option>D-74</option><option>อื่นๆ</option></select></div></div>
+    <div class="row"><div><label>จำนวนแนวดิ่ง</label><input name="nVert" inputmode="numeric"></div><div><label>จำนวนขวด</label><input name="nBottle" inputmode="numeric"></div></div>
+    <label>หมายเลขขวดตัวอย่าง</label><input name="bottleIds" placeholder="เช่น S-001, S-002">
+    <div class="row"><div><label>ปริมาตรตัวอย่างรวม (มล.)</label><input name="volume" inputmode="decimal"></div><div><label>อุณหภูมิน้ำ (°C)</label><input name="wTemp" inputmode="decimal"></div></div>
+    <div class="row"><div><label>ความขุ่นที่สังเกต</label><select name="turb"><option>ใส</option><option>ขุ่นเล็กน้อย</option><option>ขุ่นปานกลาง</option><option>ขุ่นมาก</option></select></div>
+    <div><label>Q ขณะเก็บ (ลบ.ม./วินาที) ถ้ามี</label><input name="qAt" inputmode="decimal"></div></div>
+    <div class="mut">ผลแล็บ SSC ให้ห้องปฏิบัติการกรอกใน Google Sheet ภายหลัง</div>
+  </div>
+
+  <div class="card"><h2>สภาพสถานี</h2>
+    <label>สภาพลำน้ำ</label><select name="condRiver"><option>ปกติ</option><option>มีวัชพืช/สิ่งกีดขวาง</option><option>ตลิ่งพัง/กัดเซาะ</option><option>ตื้นเขิน/ตะกอนทับถม</option><option>อื่นๆ</option></select>
+    <label>สภาพเสาระดับน้ำ</label><select name="condGauge"><option>ปกติ</option><option>ตัวเลขเลือน/อ่านยาก</option><option>ชำรุด/เอียง</option><option>สูญหาย</option></select>
+    <label>สภาพโครงสร้างระบบโทรมาตร</label><select name="condTele"><option>ปกติ</option><option>ชำรุดบางส่วน</option><option>ไม่ทำงาน</option><option>ไม่มีโทรมาตร</option></select>
+    <label>รายละเอียดความชำรุด/สิ่งที่ต้องแก้ไข</label><textarea name="condNote" rows="2"></textarea>
+  </div>
+
+  <div class="card"><h2>ภาพถ่าย</h2><div class="mut">ระบบย่อภาพอัตโนมัติและพิมพ์รหัสสถานี วันเวลา พิกัด ลงบนภาพ</div>
+    <div class="ph" id="phBox"></div></div>
+
+  <div class="card"><label>หมายเหตุ</label><textarea name="note" rows="3"></textarea>
+    <button type="button" class="bp" style="width:100%;margin-top:10px" onclick="submitForm()">บันทึกและส่งข้อมูล</button>
+    <button type="button" class="bs" style="width:100%;margin-top:8px" onclick="go('home')">ยกเลิก</button></div>
+</form>
+</section>
+
+<!-- ===== คิวส่ง ===== -->
+<section id="pg-queue" class="hide"><div class="card"><h2>รายการที่บันทึกในเครื่อง</h2>
+  <button class="bp" onclick="syncAll(true,1).then(reportSync)" style="width:100%">ส่งรายการค้างทั้งหมด</button>
+  <div id="qList" style="margin-top:10px"></div></div></section>
+
+<!-- ===== ตั้งค่า ===== -->
+<section id="pg-set" class="hide"><div class="card"><h2>ตั้งค่า</h2>
+  <label>URL ของ Apps Script Web App (/exec)</label><input id="sUrl" placeholder="https://script.google.com/macros/s/.../exec">
+  <label>รหัสลับ (TOKEN)</label><input id="sTok">
+  <label>ชื่อหัวหน้าชุด (ค่าเริ่มต้น)</label><input id="sLeader">
+  <label>ผู้ร่วมสำรวจ (ค่าเริ่มต้น)</label><input id="sTeam">
+  <label>เกณฑ์ยอมรับผลต่างโทรมาตร ±(ซม.) — ตามเกณฑ์ที่ศูนย์กำหนด</label><input id="sTol" inputmode="decimal">
+  <button class="bp" style="width:100%;margin-top:12px" onclick="saveSet()">บันทึกการตั้งค่า</button>
+  <button class="bs" style="width:100%;margin-top:8px" onclick="testConn()">ทดสอบการเชื่อมต่อ</button>
+  <div id="setMsg" class="mut" style="margin-top:8px"></div></div></section>
+</main>
+<nav><button id="nb-home" class="on" onclick="go('home')">หน้าหลัก</button><button id="nb-queue" onclick="go('queue')">คิวส่ง <span id="qCnt"></span></button><button id="nb-set" onclick="go('set')">ตั้งค่า</button></nav>
+<div id="toast"></div>
+<div id="dlg" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;align-items:center;justify-content:center;padding:20px">
+ <div style="background:#fff;border-radius:14px;max-width:420px;width:100%;padding:18px"><div id="dlgBody"></div>
+ <button class="bp" style="width:100%;margin-top:14px" onclick="$('#dlg').classList.add('hide')">ตกลง</button></div></div>
+<script>
+// [รหัส, ลำน้ำ, ที่ตั้ง, อำเภอ, จังหวัด, รหัสลุ่มน้ำ, เฉพาะกิจ, มีสำรวจตะกอน] — คำสั่ง สบอ. ปีน้ำ 2569 (ภาคใต้)
+const ST=[["X.9","คลองชะอวด","สะพานชะอวด","ชะอวด","นครศรีธรรมราช","19",0,0],["X.36","คลองพุมดวง","บ้านท่าขนอน","คีรีรัฐนิคม","สุราษฎร์ธานี","19",0,1],["X.37A","แม่น้ำตาปี","บ้านย่านดินแดง","พระแสง","สุราษฎร์ธานี","19",0,1],["X.46","คลองรับร่อ","บ้านท่าข้าม","ท่าแซะ","ชุมพร","19",0,1],["X.55","คลองท่าดี","บ้านท่าใหญ่","ลานสกา","นครศรีธรรมราช","19",0,1],["X.64","คลองท่าแซะ","บ้านท่าแซะ","ท่าแซะ","ชุมพร","19",0,0],["X.105","คลองชะอวด","บ้านไม้เสียบ","ชะอวด","นครศรีธรรมราช","19",0,1],["X.149","คลองกลาย","บ้านท้ายนา","นบพิตำ","นครศรีธรรมราช","19",0,1],["X.158","คลองท่าตะเภา","บ้านวังครก","ท่าแซะ","ชุมพร","19",0,1],["X.195","แม่น้ำตาปี","บ้านโพธิ์","ฉวาง","นครศรีธรรมราช","19",0,1],["X.200","คลองท่าดี","บ้านวังไทร","ลานสกา","นครศรีธรรมราช","19",0,0],["X.201A","คลองชุมพร (บน)","บ้านท่าไม้ลาย","เมือง","ชุมพร","19",0,0],["X.203","คลองท่าดี","บ้านนาป่า","เมือง","นครศรีธรรมราช","19",0,0],["X.213","คลองหลังสวน (บน)","บ้านพะโต๊ะ","พะโต๊ะ","ชุมพร","19",0,1],["X.217","แม่น้ำตาปี","บ้านเคียนซา","เคียนซา","สุราษฎร์ธานี","19",0,0],["X.243","แม่น้ำตาปี","บ้านควนกลาง (1)","พิปูน","นครศรีธรรมราช","19",0,0],["X.258","คลองอิปัน (บน)","บ้านใหม่","พระแสง","สุราษฎร์ธานี","19",0,1],["X.260","คลองอิปัน (ล่าง)","บ้านอาพาธ","พระแสง","สุราษฎร์ธานี","19",0,0],["X.289","คลองเสาธง","วัดถลุงทอง","ร่อนพิบูลย์","นครศรีธรรมราช","19",0,1],["X.293","คลองชุมพร","บ้านนา","เมือง","ชุมพร","19",0,1],["X.44","คลองอู่ตะเภา","บ้านหาดใหญ่ใน","หาดใหญ่","สงขลา","20",0,0],["X.67A","คลองรัตภูมิ","บ้านนาสีทอง","รัตภูมิ","สงขลา","20",0,1],["X.68","คลองท่าแค","บ้านท่าแค","เมือง","พัทลุง","20",0,0],["X.90","คลองอู่ตะเภา","บ้านบางศาลา","คลองหอยโข่ง","สงขลา","20",0,1],["X.109","คลองบางแก้ว","บ้านควนอินนอโม","ตะโหมด","พัทลุง","20",0,1],["X.112","คลองอู่ตะเภา","บ้านตะเคียนเภา","สะเดา","สงขลา","20",0,0],["X.113","คลองหล้าปัง","บ้านทุ่งปราบ","สะเดา","สงขลา","20",0,1],["X.129","คลองอีโต","บ้านคลองอีโต","บางแก้ว","พัทลุง","20",0,0],["X.170","คลองลำ","บ้านคลองลำ","ศรีนครินทร์","พัทลุง","20",0,1],["X.173A","คลองอู่ตะเภา","บ้านม่วงก็อง","สะเดา","สงขลา","20",0,0],["X.174","คลองหวะ","บ้านคลองหวะ","หาดใหญ่","สงขลา","20",0,1],["X.240","คลองวาด(บน)","บ้านหูแร่","หาดใหญ่","สงขลา","20",0,1],["X.267","คลองท่าเชียด","บ้านแม่ขรี","ตะโหมด","พัทลุง","20",0,1],["X.276","คลองท่าแนะ (บน)","บ้านเขาปู่","ศรีบรรพต","พัทลุง","20",0,1],["X.298","คลองลำ","บ้านอ่างทอง","ศรีนครินทร์","พัทลุง","20",0,0],["X.40A","แม่น้ำปัตตานี","บ้านท่าสาป","เมือง","ยะลา","21",0,1],["X.73","คลองตันหยงมัส","บ้านตันหยงมัส","ระแงะ","นราธิวาส","21",0,0],["X.77","แม่น้ำปัตตานี","บ้านหัวสะพาน","บันนังสตา","ยะลา","21",0,0],["X.119A","แม่น้ำโก-ลก","บริเวณสะพานลันตู","สุไหงโก-ลก","นราธิวาส","21",0,0],["X.184","แม่น้ำสายบุรี","บ้านซากอ","ศรีสาคร","นราธิวาส","21",0,1],["X.274","แม่น้ำโก-ลก","บ้านบูเก๊ะตา","แว้ง","นราธิวาส","21",0,1],["X.56","แม่น้ำตรัง","บ้านท่าประดู่","ห้วยยอด","ตรัง","22",0,1],["X.110","คลองลำภูรา","บ้านลำภูรา","ห้วยยอด","ตรัง","22",0,1],["X.139A","คลองปะเหลียน","บ้านปะเหลียนใน","ปะเหลียน","ตรัง","22",0,1],["X.148","คลองลำโลน","บ้านอุไดใต้","ควนกาหลง","สตูล","22",0,1],["X.150","คลองละงู","บ้านวังพระเคียน","ละงู","สตูล","22",0,1],["X.187","คลองตะกั่วป่า","บ้านหินดาน","ตะกั่วป่า","พังงา","22",0,1],["X.188A","คลองรมณีย์","บ้านรมณีย์","กะปง","พังงา","22",0,0],["X.190A","คลองบางใหญ่ (บน)","บ้านเก็ตโฮ่","กระทู้","ภูเก็ต","22",0,0],["X.191","คลองบางใหญ่ (ล่าง)","โรงเรียนสตรีภูเก็ต","เมือง","ภูเก็ต","22",0,1],["X.196","คลองกะปง","บ้านท่านา","กะปง","พังงา","22",0,1],["X.205","คลองละอุ่น","บ้านละอุ่นใต้","ละอุ่น","ระนอง","22",0,1],["X.207","คลองบางน้ำจืด","บ้านน้ำจืด","กระบุรี","ระนอง","22",0,0],["X.208A","คลองกะเปอร์","บ้านทุ่งใหญ่","กะเปอร์","ระนอง","22",0,1],["X.209","คลองหาดส้มแป้น","ถนนเพชรเกษม","เมือง","ระนอง","22",0,0],["X.228","แม่น้ำตรัง","บ้านกลาง","เมือง","ตรัง","22",0,1],["X.233","แม่น้ำตรัง","บ้านไสห้าง","ห้วยยอด","ตรัง","22",0,0],["X.234","แม่น้ำตรัง (ล่าง)","บ้านป่าหมาก","เมือง","ตรัง","22",0,0],["X.236","คลองปะเหลียน (ล่าง)","บ้านย่านตาขาว","ย่านตาขาว","ตรัง","22",0,0],["X.239","คลองดุสน","บ้านฉลุงเหนือ","เมือง","สตูล","22",0,0],["X.245","คลองพังงา","บ้านบางตง","เมือง","พังงา","22",0,1],["X.261","คลองท่าแพ (บน)","บ้านการะเกตุ","ควนกาหลง","สตูล","22",0,1],["X.279","คลองดุสน","บ้านปันจอร์","ควนโดน","สตูล","22",0,1],["X.290A","คลองโรงหัด","บ้านเจ็ดท่อ","เมือง","ระนอง","22",0,1],["X.291","คลองเหล","บ้านช้างเชื่อ","กะปง","พังงา","22",0,0],["X.297","คลองท่าหลวง","บ้านพูน","ทุ่งสง","นครศรีธรรมราช","22",0,1],["X.284","คลองท่าวัง (ท่าซัก)","สะพานราเมศวร์","เมือง","นครศรีธรรมราช","19",1,0],["X.285","คลองนครน้อย","สนามหน้าเมือง","เมือง","นครศรีธรรมราช","19",1,0],["X.286","คลองป่าเหล้า","ชุมชนหอไตร","เมือง","นครศรีธรรมราช","19",1,0],["X.287","คลองสวนหลวง","ชุมชนเพชรจริก","เมือง","นครศรีธรรมราช","19",1,0],["X.288","คลองคูพาย","ชุมชนเพชรจริก","เมือง","นครศรีธรรมราช","19",1,0],["X.71B","คลองต่ำ","บ้านควนลัง","หาดใหญ่","สงขลา","20",1,0],["X.299","คลอง ร.1","สะพานศรีภูวนารถ","หาดใหญ่","สงขลา","20",1,0]];
+const BASIN={'19':'ภาคใต้ฝั่งตะวันออกตอนบน','20':'ทะเลสาบสงขลา','21':'ภาคใต้ฝั่งตะวันออกตอนล่าง','22':'ภาคใต้ฝั่งตะวันตก'};
+const SLOTS={Q:[['up','สภาพลำน้ำด้านเหนือน้ำ'],['down','สภาพลำน้ำด้านท้ายน้ำ'],['gauge','เสาระดับน้ำ (เห็นค่าที่อ่าน)'],['tele','โครงสร้างระบบโทรมาตร'],['televal','ค่าที่โทรมาตรแสดง'],['work','ขณะปฏิบัติงานวัด'],['etc1','อื่นๆ 1'],['etc2','อื่นๆ 2']],
+             S:[['river','สภาพลำน้ำ'],['gauge','เสาระดับน้ำ (เห็นค่าที่อ่าน)'],['tele','โครงสร้างระบบโทรมาตร'],['televal','ค่าที่โทรมาตรแสดง'],['work','ขณะเก็บตัวอย่าง'],['bottle','ขวดตัวอย่าง/ฉลาก'],['etc1','อื่นๆ 1']]};
+let CAT='Q',photos={};
+const $=s=>document.querySelector(s),F=()=>$('#f'),num=v=>{v=parseFloat(String(v).replace(',','.'));return isNaN(v)?null:v};
+const cfg=()=>JSON.parse(localStorage.getItem('cfg')||'{}');
+function toast(m,ms=2600){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',ms)}
+function go(p){['home','form','queue','set'].forEach(x=>$('#pg-'+x).classList.toggle('hide',x!==p));['home','queue','set'].forEach(x=>$('#nb-'+x).classList.toggle('on',x===p||(p==='form'&&x==='home')));
+  if(p==='queue')renderQ();if(p==='set')loadSet();if(p==='home')renderQ();scrollTo(0,0)}
+
+// ---------- IndexedDB queue ----------
+let dbp=new Promise((res,rej)=>{const r=indexedDB.open('hydroField',1);r.onupgradeneeded=()=>r.result.createObjectStore('q',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function tx(mode,fn){const db=await dbp;return new Promise((res,rej)=>{const t=db.transaction('q',mode),s=t.objectStore('q');const r=fn(s);t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error)})}
+const qPut=o=>tx('readwrite',s=>s.put(o)),qAll=()=>tx('readonly',s=>s.getAll()),qDel=id=>tx('readwrite',s=>s.delete(id));
+
+// ---------- form ----------
+function startForm(c){CAT=c;photos={};F().reset();$('#fTitle').textContent=c==='Q'?'1. งานสำรวจปริมาณน้ำ':'2. งานสำรวจตะกอนแขวนลอยในลำน้ำ';
+  document.querySelectorAll('.catQ').forEach(e=>{e.classList.toggle('hide',c!=='Q');e.querySelectorAll('input,select').forEach(i=>i.disabled=c!=='Q')});
+  document.querySelectorAll('.catS').forEach(e=>{e.classList.toggle('hide',c!=='S');e.querySelectorAll('input,select').forEach(i=>i.disabled=c!=='S')});
+  const k=cfg(),f=F(),now=new Date();f.date.value=now.toLocaleDateString('sv-SE');f.tStart.value=now.toTimeString().slice(0,5);
+  f.leader.value=k.leader||'';f.team.value=k.team||'';f.teleTol.value=k.tol||'';$('#stSearch').value='';$('#vt').innerHTML='';
+  fillStations();renderSlots();calc();go('form');getGPS()}
+function fillStations(){const q=$('#stSearch').value.trim().toLowerCase(),sel=$('#station');
+  const list=ST.filter(s=>(CAT==='Q'||s[7])&&(!q||s.slice(0,5).join(' ').toLowerCase().includes(q)));
+  sel.innerHTML='<option value="">— เลือกสถานี ('+list.length+') —</option>'+list.map(s=>`<option value="${s[0]}">${s[0]} ${s[1]} ${s[2]} จ.${s[4]}${s[6]?' (เฉพาะกิจ)':''}</option>`).join('');
+  if(list.length===1){sel.value=list[0][0];stInfo()}}
+function stInfo(){const s=ST.find(x=>x[0]===$('#station').value),b=$('#stInfo');if(!s){b.classList.add('hide');return}
+  b.innerHTML=`<b>${s[0]}</b> ${s[1]} • ${s[2]} อ.${s[3]} จ.${s[4]}<br>ลุ่มน้ำ ${s[5]} ${BASIN[s[5]]} • ${s[6]?'สถานีเฉพาะกิจ':'สถานีประจำปี'}`;b.classList.remove('hide');
+  const gz=JSON.parse(localStorage.getItem('gz')||'{}');if(gz[s[0]]&&!F().gzero.value){F().gzero.value=gz[s[0]];calc()}}
+function getGPS(){const m=$('#gpsMsg');if(!navigator.geolocation){m.textContent='อุปกรณ์ไม่รองรับ GPS';return}m.textContent='กำลังอ่าน GPS…';
+  navigator.geolocation.getCurrentPosition(p=>{const f=F();f.lat.value=p.coords.latitude.toFixed(6);f.lon.value=p.coords.longitude.toFixed(6);f.gpsAcc.value=Math.round(p.coords.accuracy);m.textContent='ความแม่นยำ ±'+Math.round(p.coords.accuracy)+' ม.'},
+  e=>m.textContent='อ่าน GPS ไม่ได้: '+e.message,{enableHighAccuracy:true,timeout:20000})}
+function toMsl(v){const f=F(),x=num(v);if(x===null)return null;if(f.wlRef.value==='MSL')return x;const z=num(f.gzero.value);return z===null?null:+(z+x).toFixed(3)}
+function calc(){const f=F();$('#gzBox').classList.toggle('hide',f.wlRef.value==='MSL');
+  const a=toMsl(f.wlStart.value),b=toMsl(f.wlEnd.value),avg=a!==null&&b!==null?(a+b)/2:(a!==null?a:b);$('#wlMslTxt').textContent=avg===null?'-':avg.toFixed(3);
+  const s=toMsl(f.teleStaffRaw.value),t=num(f.teleVal.value),tol=num(f.teleTol.value),fl=$('#teleFlag');
+  if(s===null||t===null){fl.classList.add('hide');return}
+  const d=+((t-s)*100).toFixed(1);fl.classList.remove('hide');
+  if(tol===null){fl.className='flag warn';fl.textContent=`ผลต่าง ${d>0?'+':''}${d} ซม. — ยังไม่ได้ตั้งเกณฑ์ยอมรับ`}
+  else if(Math.abs(d)<=tol){fl.className='flag ok';fl.textContent=`✓ ผ่าน: ผลต่าง ${d>0?'+':''}${d} ซม. (เกณฑ์ ±${tol})`}
+  else{fl.className='flag bad';fl.textContent=`⚠ เกินเกณฑ์: ผลต่าง ${d>0?'+':''}${d} ซม. (เกณฑ์ ±${tol}) — ควรปรับแก้โทรมาตร`}}
+function addV(d='',h='',v=''){const tb=$('#vt'),n=tb.rows.length+1,tr=tb.insertRow();tr.innerHTML=`<td>${n}</td><td><input inputmode="decimal" value="${d}"></td><td><input inputmode="decimal" value="${h}"></td><td><input inputmode="decimal" value="${v}"></td><td><button type="button" class="bd" style="padding:4px 8px" onclick="this.closest('tr').remove()">×</button></td>`}
+function readV(){return [...$('#vt').rows].map(r=>[...r.querySelectorAll('input')].map(i=>num(i.value))).filter(r=>r[0]!==null&&r[1]!==null).sort((a,b)=>a[0]-b[0])}
+function midSection(){const v=readV();if(v.length<3){toast('ต้องมีอย่างน้อย 3 แนวดิ่ง (รวมขอบตลิ่ง)');return}
+  let A=0,Q=0;for(let i=0;i<v.length;i++){const bl=i?v[i-1][0]:v[i][0],br=i<v.length-1?v[i+1][0]:v[i][0],w=(br-bl)/2,a=v[i][1]*w;A+=a;Q+=a*(v[i][2]||0)}
+  const f=F();f.width.value=(v[v.length-1][0]-v[0][0]).toFixed(2);f.area.value=A.toFixed(3);f.Q.value=Q.toFixed(3);f.vMean.value=A?(Q/A).toFixed(3):'';
+  f.dMax.value=Math.max(...v.map(x=>x[1])).toFixed(2);f.nVert.value=v.filter(x=>x[1]>0).length;toast('คำนวณแล้ว Q = '+Q.toFixed(3)+' ลบ.ม./วินาที')}
+function vmean(){const f=F(),a=num(f.area.value),q=num(f.Q.value);if(a&&q!==null)f.vMean.value=(q/a).toFixed(3)}
+
+// ---------- photos ----------
+function renderSlots(){$('#phBox').innerHTML=SLOTS[CAT].map(([k,l])=>`<div class="slot" id="sl-${k}">${photos[k]?`<img src="data:image/jpeg;base64,${photos[k].b64}"><button type="button" class="x" onclick="delPh('${k}')">×</button>`:''}
+  <div>${l}</div><label>📷 ${photos[k]?'ถ่ายใหม่':'ถ่าย/เลือกภาพ'}<input type="file" accept="image/*" capture="environment" onchange="addPh('${k}','${l}',this)"></label></div>`).join('')}
+function delPh(k){delete photos[k];renderSlots()}
+async function addPh(k,l,inp){const file=inp.files[0];if(!file)return;toast('กำลังย่อภาพ…');
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)});
+  const M=1600,r=Math.min(1,M/Math.max(img.width,img.height)),w=Math.round(img.width*r),h=Math.round(img.height*r),c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');x.drawImage(img,0,0,w,h);const f=F(),fs=Math.max(16,Math.round(w/45));
+  const txt=[`${f.station.value||'-'} | ${l}`,`${f.date.value} ${new Date().toTimeString().slice(0,5)} | ${f.lat.value||'-'}, ${f.lon.value||'-'}`];
+  x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,h-fs*2.8,w,fs*2.8);x.fillStyle='#fff';x.font=`${fs}px Sarabun,sans-serif`;txt.forEach((t,i)=>x.fillText(t,fs*.5,h-fs*1.6+i*fs*1.25));
+  photos[k]={slot:k,label:l,mime:'image/jpeg',b64:c.toDataURL('image/jpeg',.75).split(',')[1]};URL.revokeObjectURL(img.src);renderSlots()}
+
+// ---------- submit / sync ----------
+async function submitForm(){const f=F();const k0=cfg();if(!k0.url||!k0.tok){showDlg('warn','ยังไม่ได้ตั้งค่าการเชื่อมต่อ','กรุณาไปที่หน้า <b>ตั้งค่า</b> ใส่ URL และรหัสลับ แล้วกด <b>บันทึกการตั้งค่า</b> ก่อน<br>ข้อมูลในฟอร์มนี้ยังอยู่ ไม่หายไป');return}if(!f.station.value){toast('กรุณาเลือกสถานี');return}if(!f.leader.value){toast('กรุณาใส่ชื่อหัวหน้าชุด');return}
+  if(!f.tEnd.value)f.tEnd.value=new Date().toTimeString().slice(0,5);
+  const d={};new FormData(f).forEach((v,k)=>d[k]=v);
+  const a=toMsl(d.wlStart),b=toMsl(d.wlEnd);d.wlMsl=a!==null&&b!==null?+((a+b)/2).toFixed(3):(a!==null?a:b);d.wlRef=d.wlRef==='MSL'?'ม.รทก.':'เทียบศูนย์เสา';
+  d.teleStaff=toMsl(d.teleStaffRaw);delete d.teleStaffRaw;const t=num(d.teleVal),tol=num(d.teleTol);
+  if(d.teleStaff!==null&&t!==null){d.teleDiff=+((t-d.teleStaff)*100).toFixed(1);d.teleResult=tol===null?'ไม่ได้ตั้งเกณฑ์':(Math.abs(d.teleDiff)<=tol?'ผ่าน':'เกินเกณฑ์')}else d.teleResult='ไม่ได้ตรวจ';
+  if(CAT==='Q')d.verticals=readV();
+  if(d.gzero){const gz=JSON.parse(localStorage.getItem('gz')||'{}');gz[d.station]=d.gzero;localStorage.setItem('gz',JSON.stringify(gz))}
+  const id=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+  await qPut({id,category:CAT,data:d,photos:Object.values(photos),status:'wait',created:Date.now(),err:''});
+  toast('บันทึกลงเครื่องแล้ว กำลังส่ง…',8000);go('queue');const r=await syncAll(true,1);reportSync(r)}
+let syncing=false;
+function cleanUrl(u){const m=String(u||'').match(/https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/);return m?m[0]:String(u||'').trim()}
+function errText(e){const m=String(e&&e.message||e);if(/fetch|network|load/i.test(m))return 'เชื่อมต่อ Apps Script ไม่ได้ ('+m+') — ตรวจ URL /exec และการ Deploy ว่า Who has access = Anyone';return m}
+async function postJSON(url,obj){const r=await fetch(url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(obj)});
+  const t=await r.text();try{return JSON.parse(t)}catch(e){throw new Error('เซิร์ฟเวอร์ตอบกลับไม่ใช่ JSON (HTTP '+r.status+') — มักเกิดจาก URL ผิด หรือสิทธิ์ Deploy ไม่ใช่ Anyone')}}
+async function syncAll(manual){const res={ok:0,dup:0,err:[],skipped:''};const k=cfg();
+  if(!k.url||!k.tok){res.skipped='ยังไม่ได้ตั้งค่า URL/รหัสลับ';if(manual&&!arguments[1])toast(res.skipped);renderQ();return res}
+  if(!navigator.onLine){res.skipped='ไม่มีสัญญาณ ข้อมูลเก็บในเครื่องแล้ว จะส่งอัตโนมัติเมื่อกลับมาออนไลน์';renderQ();return res}
+  if(syncing){res.skipped='กำลังส่งอยู่';return res}syncing=true;
+  try{for(const it of await qAll()){if(it.status==='ok')continue;it.status='sending';await qPut(it);renderQ();
+    try{const j=await postJSON(cleanUrl(k.url),{token:k.tok,id:it.id,category:it.category,data:it.data,photos:it.photos,device:navigator.userAgent.slice(0,120)});
+      if(j.ok){it.status='ok';it.photos=[];it.sent=Date.now();it.err='';j.duplicate?res.dup++:res.ok++}else{it.status='err';it.err=j.error||'ผิดพลาด';res.err.push(it.data.station+': '+it.err)}}
+    catch(e){it.status='err';it.err=errText(e);res.err.push(it.data.station+': '+it.err)}
+    await qPut(it);renderQ()}}finally{syncing=false;renderQ()}
+  if(manual===true&&!arguments[1]&&(res.ok||res.err.length))reportSync(res);return res}
+function showDlg(type,title,body){const c={ok:['var(--okL)','var(--ok)','✓'],warn:['var(--warnL)','var(--warn)','!'],bad:['var(--badL)','var(--bad)','✕']}[type];
+  $('#dlgBody').innerHTML=`<div style="background:${c[0]};color:${c[1]};border-radius:10px;padding:12px;font-weight:700;font-size:18px">${c[2]} ${title}</div><div style="margin-top:10px;font-size:15px;line-height:1.5">${body}</div>`;$('#dlg').classList.remove('hide')}
+function reportSync(r){if(r.skipped){showDlg('warn','ยังไม่ได้ส่ง',r.skipped);return}
+  if(r.err.length)showDlg('bad','ส่งไม่สำเร็จ '+r.err.length+' รายการ',r.err.map(e=>'• '+e).join('<br>')+'<br><span class="mut">ข้อมูลยังเก็บอยู่ในเครื่อง กด "ส่งรายการค้างทั้งหมด" ได้อีกครั้ง</span>');
+  else if(r.ok||r.dup)showDlg('ok','ส่งข้อมูลสำเร็จ',`บันทึกลง Google Sheet แล้ว ${r.ok+r.dup} รายการ`);
+  else showDlg('ok','ไม่มีรายการค้างส่ง','')}
+async function renderQ(){const all=(await qAll()).sort((a,b)=>b.created-a.created),pend=all.filter(x=>x.status!=='ok').length;
+  $('#qCnt').textContent=pend?'('+pend+')':'';$('#homeQ').innerHTML=pend?`<span class="badge b-wait">ค้างส่ง ${pend} รายการ</span>`:'<span class="badge b-ok">ส่งครบแล้ว</span>';
+  $('#qList').innerHTML=all.length?all.map(x=>`<div class="q"><span class="badge ${x.status==='ok'?'b-ok':x.status==='err'?'b-err':'b-wait'}">${x.status==='ok'?'ส่งแล้ว':x.status==='err'?'ส่งไม่สำเร็จ':x.status==='sending'?'กำลังส่ง…':'รอส่ง'}</span>
+   <b> ${x.data.station}</b> • ${x.category==='Q'?'ปริมาณน้ำ':'ตะกอน'} • ${x.data.date} ${x.data.tStart||''}<br><span class="mut">${x.category==='Q'&&x.data.Q?'Q = '+x.data.Q+' ลบ.ม./วิ • ':''}ภาพ ${x.photos.length||'-'} • ${x.err||''}</span>
+   ${x.status==='ok'?`<div style="text-align:right"><button class="bd" style="padding:4px 10px;font-size:13px" onclick="qDel('${x.id}').then(renderQ)">ลบออกจากเครื่อง</button></div>`:''}</div>`).join(''):'<div class="mut">ยังไม่มีรายการ</div>'}
+
+// ---------- settings ----------
+function loadSet(){const k=cfg();$('#sUrl').value=k.url||'';$('#sTok').value=k.tok||'';$('#sLeader').value=k.leader||'';$('#sTeam').value=k.team||'';$('#sTol').value=k.tol||''}
+function saveSet(quiet){$('#sUrl').value=cleanUrl($('#sUrl').value);localStorage.setItem('cfg',JSON.stringify({url:$('#sUrl').value,tok:$('#sTok').value.trim(),leader:$('#sLeader').value.trim(),team:$('#sTeam').value.trim(),tol:$('#sTol').value.trim()}));if(!quiet)toast('บันทึกการตั้งค่าแล้ว')}
+async function testConn(){saveSet(1);const k=cfg(),m=$('#setMsg');if(!k.url||!k.tok){showDlg('warn','ข้อมูลไม่ครบ','กรุณาใส่ทั้ง URL และรหัสลับ');return}m.textContent='กำลังทดสอบ…';
+  try{const j=await postJSON(k.url,{token:k.tok,action:'ping'});m.textContent='';
+    if(j.ok)showDlg('ok','เชื่อมต่อสำเร็จ','URL และรหัสลับถูกต้อง<br>สถานีในระบบ '+(j.stations||'-')+' สถานี'+(j.sheets?'':'<br><b style="color:var(--warn)">แต่ยังไม่พบไฟล์ Google Sheet — ให้รัน setup() ใน Apps Script</b>'));
+    else showDlg('bad','เชื่อมต่อได้ แต่ถูกปฏิเสธ',j.error||'-')}
+  catch(e){m.textContent='';showDlg('bad','เชื่อมต่อไม่ได้',errText(e))}}
+
+function netUI(){const n=$('#net');n.textContent=navigator.onLine?'ออนไลน์':'ออฟไลน์';n.classList.toggle('off',!navigator.onLine);if(navigator.onLine)syncAll()}
+addEventListener('online',netUI);addEventListener('offline',netUI);netUI();renderQ();
+</script></body></html>
